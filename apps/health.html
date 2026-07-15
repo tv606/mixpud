@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+   <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/food.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Health">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Kalori Sayacı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen p-4 flex justify-center items-center">
+
+    <div class="max-w-md w-full space-y-4">
+        <div class="bg-slate-800 rounded-3xl p-8 text-center border border-slate-700 shadow-2xl">
+            <h2 class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Kalan Kalori</h2>
+            <div id="remaining" class="text-7xl font-black text-emerald-400">1350</div>
+            <div class="mt-4 text-[10px] text-slate-500 uppercase tracking-tighter">Günlük Hedef: 1250 kcal</div>
+        </div>
+
+        <div class="bg-slate-800 p-6 rounded-3xl border border-slate-700">
+            <input type="number" id="calInput" 
+                class="w-full bg-slate-900 border-none rounded-2xl p-4 text-center text-2xl font-bold text-white placeholder-slate-700 outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="Kalori Gir">
+            
+            <button onclick="addCalories()" 
+                class="w-full mt-4 bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-black py-4 rounded-2xl transition-all active:scale-95">
+                EKLE
+            </button>
+
+            <button onclick="resetAll()" 
+                class="w-full mt-6 text-[10px] text-slate-500 hover:text-red-400 underline uppercase tracking-widest">
+                Verileri Sıfırla
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const GOAL = 1250;
+
+        // Sayfa açıldığında çalışır
+        window.onload = () => {
+            checkNewDay();
+            updateUI();
+        };
+
+        // Gece yarısı olduysa sıfırla
+        function checkNewDay() {
+            const today = new Date().toDateString();
+            if (localStorage.getItem('lastDate') !== today) {
+                localStorage.setItem('used', '0');
+                localStorage.setItem('lastDate', today);
+            }
+        }
+
+        // Kalori ekle
+        function addCalories() {
+            const input = document.getElementById('calInput');
+            const val = parseInt(input.value);
+
+            if (val > 0) {
+                let used = parseInt(localStorage.getItem('used') || '0');
+                localStorage.setItem('used', used + val);
+                input.value = '';
+                updateUI();
+            }
+        }
+
+        // Ekranı güncelle
+        function updateUI() {
+            const used = parseInt(localStorage.getItem('used') || '0');
+            const remaining = GOAL - used;
+            const display = document.getElementById('remaining');
+            
+            display.innerText = remaining;
+            
+            // Eksiye düşerse kırmızı yap
+            if (remaining < 0) {
+                display.classList.replace('text-emerald-400', 'text-red-500');
+            } else {
+                display.classList.replace('text-red-500', 'text-emerald-400');
+            }
+        }
+
+        // Manuel sıfırlama
+        function resetAll() {
+            if (confirm("Bugünkü tüm veriler silinsin mi?")) {
+                localStorage.setItem('used', '0');
+                updateUI();
+            }
+        }
+    </script>
+</body>
+</html>
