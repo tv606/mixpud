@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1024, initial-scale=0.35, minimum-scale=0.1, user-scalable=no">
+    <title>MixPUD</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WebOS">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            /* Kendi yerel görselin */
+            background: url('apps/icons/wallpaper.jpg') no-repeat center center/cover;
+            background-color:#000000;
+        }
+
+        /* Masaüstü Izgarası */
+        #desktop {
+            width: 100%;
+            height: calc(100% - 50px);
+            position: relative;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-content: flex-start;
+            flex-wrap: wrap;
+            gap: 25px;
+        }
+
+        /* Masaüstü Simgeleri */
+        .icon {
+            width: 95px;
+            height: 110px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: background 0.2s;
+        }
+        .icon:active {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .icon-img {
+            font-size: 45px;
+            margin-bottom: 5px;
+        }
+        .icon-txt {
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+            text-align: center;
+        }
+
+        /* Görev Çubuğu */
+        #taskbar {
+            width: 100%;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            position: absolute;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 9999;
+            border-top: 1px solid rgba(255,255,255,0.15);
+        }
+        
+        /* Başlat Butonu */
+        #start-btn {
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            background: rgba(255,255,255,0.18);
+            padding: 6px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        #start-btn:active {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Açık Uygulamalar Listesi (Taskbar Ortası) */
+        #active-apps {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            margin: 0 20px;
+            overflow-x: auto;
+        }
+        .taskbar-tab {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            white-space: nowrap;
+        }
+        .taskbar-tab.active-tab {
+            background: rgba(255, 255, 255, 0.35);
+            border-color: rgba(255, 255, 255, 0.4);
+            font-weight: bold;
+        }
+
+        /* Saat ve Tarih Alanı */
+        #system-tray {
+            color: white;
+            text-align: right;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        #clock {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        #date {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        /* Info Pop-up (Başlat Menüsü) */
+        #info-popup {
+            position: absolute;
+            bottom: 60px;
+            left: 20px;
+            width: 320px;
+            background: rgba(30, 30, 30, 0.85);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            color: white;
+            padding: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 10000;
+        }
+        #info-popup h3 {
+            font-size: 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 8px;
+        }
+        #info-popup p {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #ccc;
+        }
+        #info-popup .footer-info {
+            font-size: 11px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        /* Ortak Pencere Tasarımı (Resizable) */
+        .window {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.4);
+            z-index: 10;
+            
+            resize: both;
+            min-width: 350px;
+            min-height: 250px;
+            max-width: 95vw;
+            max-height: 85vh;
+        }
+        .window-header {
+            background: rgba(0, 0, 0, 0.06);
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+            border-bottom: 1px solid rgba(0,0,0,0.12);
+            font-weight: bold;
+        }
+        .window-title {
+            font-size: 14px;
+            color: #222;
+        }
+        .close-btn {
+            width: 16px;
+            height: 16px;
+            background: #ff5f56;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+        .window-body {
+            flex: 1;
+            height: calc(100% - 40px);
+            overflow: hidden;
+        }
+        
+        /* İframe Uygulama Taşıyıcı */
+        .app-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        /* Tarayıcıya Özel Tasarımlar */
+        .browser-bar {
+            display: flex;
+            padding: 8px;
+            background: #f1f1f1;
+            border-bottom: 1px solid #ddd;
+            gap: 10px;
+        }
+        .browser-bar input {
+            flex: 1;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            outline: none;
+            font-size: 13px;
+        }
+        .browser-bar button {
+            padding: 6px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="desktop">
+        <div class="icon" onclick="openWindow('notepad', 'Not Defteri')">
+            <span class="icon-img">📝</span>
+            <span class="icon-txt">Not Defteri</span>
+        </div>
+
+        <div class="icon" onclick="openWindow('browser', 'İnternet')">
+            <span class="icon-img">🌐</span>
+            <span class="icon-txt">İnternet</span>
+        </div>
+
+        <div class="icon" onclick="openWindow('music-app', 'Müzik Çalar')">
+            <span class="icon-img">🎵</span>
+            <span class="icon-txt">Müzik Çalar</span>
+        </div>
+
+        <div class="icon" onclick="openWindow('iptv-app', 'IPTV Player')">
+            <span class="icon-img">📺</span>
+            <span class="icon-txt">IPTV Player</span>
+        </div>
+
+        <div class="icon" onclick="openWindow('calorie-app', 'Kalori Sayar')">
+            <span class="icon-img">🍎</span>
+            <span class="icon-txt">Kalori Sayar</span>
+        </div>
+    </div>
+
+    <div id="notepad" class="window" style="top: 100px; left: 100px; width: 450px; height: 300px;">
+        <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
+            <span class="window-title">Not Defteri</span>
+            <button class="close-btn" onclick="closeWindow('notepad')"></button>
+        </div>
+        <div class="window-body">
+            <iframe src="apps/notepad.html" class="app-iframe"></iframe>
+        </div>
+    </div>
+
+    <div id="browser" class="window" style="top: 80px; left: 180px; width: 800px; height: 500px;">
+        <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
+            <span class="window-title">İnternet Tarayıcısı</span>
+            <button class="close-btn" onclick="closeWindow('browser')"></button>
+        </div>
+        <div class="browser-bar">
+            <input type="text" id="browser-url" value="https://www.google.com/search?igu=1">
+            <button onclick="navigateBrowser()">Git</button>
+        </div>
+        <iframe id="browser-iframe" src="https://www.google.com/search?igu=1" class="app-iframe"></iframe>
+    </div>
+
+    <div id="music-app" class="window" style="top: 150px; left: 300px; width: 400px; height: 660px;">
+        <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
+            <span class="window-title">Müzik Çalar</span>
+            <button class="close-btn" onclick="closeWindow('music-app')"></button>
+        </div>
+        <div class="window-body">
+            <iframe src="apps/winamp.html" class="app-iframe"></iframe>
+        </div>
+    </div>
+
+    <div id="iptv-app" class="window" style="top: 50px; left: 250px; width: 1000px; height: 600px;">
+        <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
+            <span class="window-title">TV Player</span>
+            <button class="close-btn" onclick="closeWindow('iptv-app')"></button>
+        </div>
+        <div class="window-body">
+            <iframe src="apps/webtv.html" class="app-iframe"></iframe>
+        </div>
+    </div>
+
+    <div id="calorie-app" class="window" style="top: 120px; left: 400px; width: 420px; height: 600px;">
+        <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
+            <span class="window-title">Kalori Sayar</span>
+            <button class="close-btn" onclick="closeWindow('calorie-app')"></button>
+        </div>
+        <div class="window-body">
+            <iframe src="apps/health.html" class="app-iframe"></iframe>
+        </div>
+    </div>
+
+    <div id="info-popup">
+        <h3>MixPUD</h3>
+        <p>Mobil cihazlar ile harici monitör üzerinden tam ekran masaüstü deneyimi yaşatmak için özel tasarlanmış web tabanlı minimalist arayüz.</p>
+        <p><strong>Geliştirici:</strong> downer</p>
+        <div class="footer-info">Sürüm: v1.0.0 • 2026</div>
+    </div>
+
+    <div id="taskbar">
+        <div id="start-btn" onclick="toggleInfoPopup(event)">MixPUD</div>
+        
+        <div id="active-apps"></div>
+        
+        <div id="system-tray">
+            <div id="clock">00:00</div>
+            <div id="date">01.01.2026</div>
+        </div>
+    </div>
+
+    <script>
+        // Saat ve Tarih Güncelleme
+        function updateDateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+            const dateStr = now.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            
+            document.getElementById('clock').textContent = timeStr;
+            document.getElementById('date').textContent = dateStr;
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // Başlat Pop-up Aç/Kapat
+        function toggleInfoPopup(e) {
+            e.stopPropagation();
+            const popup = document.getElementById('info-popup');
+            popup.style.display = (popup.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        // Boş bir yere tıklayınca pop-up'ı kapat
+        document.addEventListener('click', (e) => {
+            const popup = document.getElementById('info-popup');
+            if (popup.style.display === 'flex' && e.target.id !== 'start-btn') {
+                popup.style.display = 'none';
+            }
+        });
+
+       // --- PENCERE VE GÖREV ÇUBUĞU ENTEGRASYONU ---
+        let openAppsList = {};
+
+        // Uygulamaların varsayılan iframe kaynak (src) adreslerini tutan harita
+        const appSources = {
+            'notepad': 'apps/notepad.html',
+            'browser': 'https://www.google.com/search?igu=1',
+            'music-app': 'apps/winamp.html',
+            'iptv-app': 'apps/webtv.html',
+            'calorie-app': 'apps/health.html'
+        };
+
+        function openWindow(id, title) {
+            const win = document.getElementById(id);
+            
+            // Pencere açılırken eğer iframe'in içi boşsa (kapatıldığında boşaltmıştık) kaynağını yeniden yükle
+            const iframe = win.querySelector('.app-iframe, #browser-iframe');
+            if (iframe && (!iframe.src || iframe.src === 'about:blank' || iframe.src === window.location.href)) {
+                iframe.src = appSources[id];
+            }
+
+            win.style.display = 'flex';
+            bringToFront(win);
+            
+            openAppsList[id] = title;
+            updateTaskbar();
+        }
+
+        function closeWindow(id) {
+            const win = document.getElementById(id);
+            win.style.display = 'none';
+
+            // Pencere kapatılırken iframe kaynağını sıfırla ki ses/yayın tamamen dursun
+            const iframe = win.querySelector('.app-iframe, #browser-iframe');
+            if (iframe) {
+                iframe.src = 'about:blank'; // iframe içeriğini tamamen boşaltır
+            }
+
+            delete openAppsList[id];
+            updateTaskbar();
+        }
+
+        function bringToFront(win) {
+            document.querySelectorAll('.window').forEach(w => w.style.zIndex = 10);
+            win.style.zIndex = 100;
+            
+            document.querySelectorAll('.taskbar-tab').forEach(tab => tab.classList.remove('active-tab'));
+            const activeTab = document.getElementById('tab-' + win.id);
+            if (activeTab) activeTab.classList.add('active-tab');
+        }
+
+        function updateTaskbar() {
+            const container = document.getElementById('active-apps');
+            container.innerHTML = '';
+
+            for (let id in openAppsList) {
+                const tab = document.createElement('div');
+                tab.id = 'tab-' + id;
+                tab.className = 'taskbar-tab active-tab';
+                tab.textContent = openAppsList[id];
+                
+                tab.onclick = () => {
+                    const win = document.getElementById(id);
+                    bringToFront(win);
+                };
+
+                container.appendChild(tab);
+            }
+        }
+
+        // Tarayıcı Gitme
+        function navigateBrowser() {
+            let urlInput = document.getElementById('browser-url').value;
+            let finalUrl = urlInput;
+            if (!urlInput.startsWith('http://') && !urlInput.startsWith('https://')) {
+                finalUrl = 'https://www.google.com/search?igu=1&q=' + encodeURIComponent(urlInput);
+            }
+            document.getElementById('browser-iframe').src = finalUrl;
+        }
+        document.getElementById('browser-url').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') navigateBrowser();
+        });
+
+        // Sürükleme Mekanizması
+        let activeWin = null;
+        let currentX, currentY, initialX, initialY;
+
+        function dragStart(e) {
+            if (['BUTTON', 'INPUT', 'TEXTAREA', 'IFRAME'].includes(e.target.tagName)) return;
+            
+            const rect = e.target.getBoundingClientRect();
+            const x = (e.type === "touchstart") ? e.touches[0].clientX : e.clientX;
+            const y = (e.type === "touchstart") ? e.touches[0].clientY : e.clientY;
+            
+            if (rect.right - x < 20 && rect.bottom - y < 20) return; // Resize kontrolü
+
+            activeWin = e.target.closest('.window');
+            bringToFront(activeWin);
+
+            const winRect = activeWin.getBoundingClientRect();
+            
+            if (e.type === "touchstart") {
+                initialX = e.touches[0].clientX - winRect.left;
+                initialY = e.touches[0].clientY - winRect.top;
+            } else {
+                initialX = e.clientX - winRect.left;
+                initialY = e.clientY - winRect.top;
+            }
+
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', dragEnd);
+            document.addEventListener('touchmove', drag, { passive: false });
+            document.addEventListener('touchend', dragEnd);
+        }
+
+        function drag(e) {
+            if (activeWin) {
+                e.preventDefault();
+                if (e.type === "touchmove") {
+                    currentX = e.touches[0].clientX - initialX;
+                    currentY = e.touches[0].clientY - initialY;
+                } else {
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                }
+                activeWin.style.left = currentX + "px";
+                activeWin.style.top = currentY + "px";
+            }
+        }
+
+        function dragEnd() {
+            activeWin = null;
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', dragEnd);
+            document.removeEventListener('touchmove', drag);
+            document.removeEventListener('touchend', dragEnd);
+        }
+    </script>
+</body>
+</html>
