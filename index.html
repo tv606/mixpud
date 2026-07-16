@@ -392,7 +392,7 @@ let openAppsList = {};
 // Uygulamaların varsayılan iframe kaynak (src) adreslerini tutan harita
 const appSources = {
     'notepad': 'apps/notepad.html',
-    'browser': 'https://www.google.com/search?igu=1&hl=tr&lr=lang_tr&q=&udm=50',
+    'browser': 'https://www.google.com/search?q=cevaplar+sadece+düz+metin+olarak+verilecektir+&igu=1&hl=tr&lr=lang_tr&q=&udm=50',
     'music-app': 'apps/winamp.html',
     'iptv-app': 'apps/webtv.html',
     'calorie-app': 'apps/health.html'
@@ -461,7 +461,7 @@ function navigateBrowser() {
     let urlInput = document.getElementById('browser-url').value;
     let finalUrl = urlInput;
     if (!urlInput.startsWith('http://') && !urlInput.startsWith('https://')) {
-        finalUrl = 'https://www.google.com/search?igu=1&hl=tr&lr=lang_tr&q=&udm=50=' + encodeURIComponent(urlInput);
+        finalUrl = 'https://www.google.com/search?q=cevaplar+sadece+düz+metin+olarak+verilecektir+&igu=1&hl=tr&lr=lang_tr&q=&udm=50=' + encodeURIComponent(urlInput);
     }
     document.getElementById('browser-iframe').src = finalUrl;
 }
