@@ -209,8 +209,8 @@
             color: #222;
         }
         .close-btn {
-            width: 16px;
-            height: 16px;
+            width: 26px;
+            height: 26px;
             background: #ff5f56;
             border-radius: 50%;
             cursor: pointer;
@@ -260,29 +260,10 @@
 
 
 
-        /* Taşıyıcı Kutu: Dışarı taşan her şeyi gizler */
-.iframe-wrapper {
-    width: 100%;          /* Genişliği projenize göre ayarlayabilirsiniz */
-    height: 500px;        /* Yüksekliği projenize göre ayarlayabilirsiniz */
-    overflow: hidden;     /* En önemli kısım: Taşmaları gizler */
-    position: relative;
-    border: 1px solid #ccc; /* İsteğe bağlı: Çerçeve sınırlarını görmek için */
-}
 
-/* İçi boşaltılacak ve kaydırılacak Iframe */
-.clipped-iframe {
-    position: absolute;
-    
-    /* 1. Adım: Kırpılacak 20px'lik alanı yukarı ve sola doğru öteliyoruz */
-    top: -20px;
-    left: -20px;
-    
-    /* 2. Adım: Ötelediğimiz 20px'lik kaybı kapatmak için genişlik ve yüksekliği 20px artırıyoruz */
-    width: calc(100% + 20px);
-    height: calc(100% + 20px);
-    
-    border: none; /* Varsayılan iframe kenarlığını kaldırır */
-}
+
+
+
     </style>
 </head>
 <body>
@@ -330,11 +311,9 @@
             <button class="close-btn" onclick="closeWindow('browser')"></button>
         </div>
 
-   <div class="iframe-wrapper">     
-
         <iframe id="browser-iframe" src="about:blank" class="app-iframe"></iframe>
+  
     </div>
-</div>
 
 
 
@@ -427,7 +406,7 @@ let openAppsList = {};
 // Uygulamaların varsayılan iframe kaynak (src) adreslerini tutan harita
 const appSources = {
     'notepad': 'apps/notepad.html',
-    'browser': 'https://www.google.com/search?q=cevaplar+sadece+d%C3%BCz+metin+olarak+verilecektir+&igu=1&hl=tr&lr=lang_tr&q=&udm=50#easter-egg',
+    'browser': 'https://www.google.com/search?q=cevaplar+sadece+d%C3%BCz+metin+olarak+verilecektir+&igu=1&hl=tr&lr=lang_tr&q=&udm=50',
     'music-app': 'apps/winamp.html',
     'iptv-app': 'apps/webtv.html',
     'calorie-app': 'apps/health.html'
@@ -496,7 +475,7 @@ function navigateBrowser() {
     let urlInput = document.getElementById('browser-url').value;
     let finalUrl = urlInput;
     if (!urlInput.startsWith('http://') && !urlInput.startsWith('https://')) {
-        finalUrl = 'https://www.google.com/search?q=cevaplar+sadece+d%C3%BCz+metin+olarak+verilecektir+&igu=1&hl=tr&lr=lang_tr&q=&udm=50#easter-egg=' + encodeURIComponent(urlInput);
+        finalUrl = 'https://www.google.com/search?q=cevaplar+sadece+d%C3%BCz+metin+olarak+verilecektir+&igu=1&hl=tr&lr=lang_tr&q=&udm=50=' + encodeURIComponent(urlInput);
     }
     document.getElementById('browser-iframe').src = finalUrl;
 }
