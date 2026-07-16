@@ -220,7 +220,7 @@
     <!-- Oynatıcı Alanı (Masaüstünde Dev Ekran) -->
     <div class="player-section">
         <div class="player-wrapper">
-            <video id="main-tv-player" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto" playsinline></video>
+            <video id="main-tv-player" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="metadata" playsinline></video>
         </div>
         <div class="info-bar">
             <h1>WEB TV</h1>
@@ -275,97 +275,102 @@
           
         ];
 
-        let activeFocusIndex = 0;
+       let activeFocusIndex = 0;
 
-        const player = videojs('main-tv-player', {
-            fluid: false, // Tam ekran yayılımı sağlamak için akışkan mod kapatıldı (Masaüstü için)
-            fill: true,   // Video.js'in içinde bulunduğu div'i tamamen doldurmasını sağlar
-            techOrder: ["html5", "youtube"],
-            youtube: { "iv_load_policy": 3, "modestbranding": 1 }
+const player = videojs('main-tv-player', {
+    fluid: false, 
+    fill: true,   
+    techOrder: ["html5", "youtube"],
+    youtube: { "iv_load_policy": 3, "modestbranding": 1 }
+});
+
+const gridContainer = document.getElementById('channelGrid');
+const currentTrackBadge = document.getElementById('currentTrack');
+
+function initApp() {
+    channels.forEach((channel, idx) => {
+        const card = document.createElement('div');
+        card.className = `channel-card ${idx === 0 ? 'active' : ''}`;
+        card.setAttribute('tabindex', '0'); 
+        card.setAttribute('data-index', idx);
+
+        card.innerHTML = `
+            <div class="logo-container">
+                <img src="${channel.logo}" class="channel-logo" alt="${channel.name}" onerror="this.src='https://via.placeholder.com/50?text=TV'">
+            </div>
+            <div class="channel-details">
+                <div class="channel-name">${channel.name}</div>
+                <div class="channel-type">${channel.type === 'youtube' ? 'YouTube' : 'Live Stream'}</div>
+            </div>
+        `;
+
+        card.addEventListener('click', () => { selectChannel(idx); });
+        card.addEventListener('focus', () => { activeFocusIndex = idx; });
+        gridContainer.appendChild(card);
+    });
+
+    // İlk açılışta ilk kanalı yükle ama OYNATMA (false gönderdik)
+    if(channels.length > 0) playStream(channels[0], false);
+    
+    setTimeout(() => {
+        const initialFocus = document.querySelector('.channel-card');
+        if(initialFocus) initialFocus.focus();
+    }, 500);
+}
+
+function selectChannel(idx) {
+    document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
+    const cards = document.querySelectorAll('.channel-card');
+    if(cards[idx]) {
+        cards[idx].classList.add('active');
+        playStream(channels[idx], true); // Kullanıcı seçince OYNAT (true gönderdik)
+    }
+}
+
+function playStream(channel, shouldPlay = true) {
+    currentTrackBadge.innerText = channel.name;
+    if (channel.type === "youtube") {
+        player.src({ src: channel.url, type: "video/youtube" });
+    } else {
+        player.src({ src: channel.url, type: "application/x-mpegURL" });
+    }
+    
+    // Sadece true gelirse otomatik oynatmayı dener
+    if (shouldPlay) {
+        player.ready(() => {
+            player.play().catch(() => console.log("Oynatma başlatılamadı"));
         });
+    }
+}
 
-        const gridContainer = document.getElementById('channelGrid');
-        const currentTrackBadge = document.getElementById('currentTrack');
-
-        function initApp() {
-            channels.forEach((channel, idx) => {
-                const card = document.createElement('div');
-                card.className = `channel-card ${idx === 0 ? 'active' : ''}`;
-                card.setAttribute('tabindex', '0'); 
-                card.setAttribute('data-index', idx);
-
-                card.innerHTML = `
-                    <div class="logo-container">
-                        <img src="${channel.logo}" class="channel-logo" alt="${channel.name}" onerror="this.src='https://via.placeholder.com/50?text=TV'">
-                    </div>
-                    <div class="channel-details">
-                        <div class="channel-name">${channel.name}</div>
-                        <div class="channel-type">${channel.type === 'youtube' ? 'YouTube' : 'Live Stream'}</div>
-                    </div>
-                `;
-
-                card.addEventListener('click', () => { selectChannel(idx); });
-                card.addEventListener('focus', () => { activeFocusIndex = idx; });
-                gridContainer.appendChild(card);
-            });
-
-            if(channels.length > 0) playStream(channels[0]);
-            
-            setTimeout(() => {
-                const initialFocus = document.querySelector('.channel-card');
-                if(initialFocus) initialFocus.focus();
-            }, 500);
-        }
-
-        function selectChannel(idx) {
-            document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
-            const cards = document.querySelectorAll('.channel-card');
-            if(cards[idx]) {
-                cards[idx].classList.add('active');
-                playStream(channels[idx]);
+// TV Kumandası Tuş Kombinasyonları
+document.addEventListener('keydown', function(e) {
+    const cards = document.querySelectorAll('.channel-card');
+    switch(e.key) {
+        case 'ArrowDown':
+            e.preventDefault();
+            if (activeFocusIndex < cards.length - 1) {
+                activeFocusIndex++;
+                cards[activeFocusIndex].focus();
+                cards[activeFocusIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
-        }
-
-        function playStream(channel) {
-            currentTrackBadge.innerText = channel.name;
-            if (channel.type === "youtube") {
-                player.src({ src: channel.url, type: "video/youtube" });
-            } else {
-                player.src({ src: channel.url, type: "application/x-mpegURL" });
+            break;
+        case 'ArrowUp':
+            e.preventDefault();
+            if (activeFocusIndex > 0) {
+                activeFocusIndex--;
+                cards[activeFocusIndex].focus();
+                cards[activeFocusIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
-            player.ready(() => {
-                player.play().catch(() => console.log("Oynatma başlatılamadı"));
-            });
-        }
+            break;
+        case 'Enter':
+            e.preventDefault();
+            selectChannel(activeFocusIndex);
+            break;
+    }
+});
 
-        // TV Kumandası Tuş Kombinasyonları
-        document.addEventListener('keydown', function(e) {
-            const cards = document.querySelectorAll('.channel-card');
-            switch(e.key) {
-                case 'ArrowDown':
-                    e.preventDefault();
-                    if (activeFocusIndex < cards.length - 1) {
-                        activeFocusIndex++;
-                        cards[activeFocusIndex].focus();
-                        cards[activeFocusIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }
-                    break;
-                case 'ArrowUp':
-                    e.preventDefault();
-                    if (activeFocusIndex > 0) {
-                        activeFocusIndex--;
-                        cards[activeFocusIndex].focus();
-                        cards[activeFocusIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }
-                    break;
-                case 'Enter':
-                    e.preventDefault();
-                    selectChannel(activeFocusIndex);
-                    break;
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', initApp);
+document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
