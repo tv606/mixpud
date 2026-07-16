@@ -295,53 +295,53 @@
         </div>
     </div>
 
-<div id="notepad" class="window" style="width: 450px; height: 300px;">
-    <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
-        <span class="window-title">Not Defteri</span>
-        <button class="close-btn" onclick="closeWindow('notepad')"></button>
-    </div>
-    <div class="window-body">
-        <iframe src="about:blank" class="app-iframe"></iframe>
-    </div>
-</div>
+<div id="notepad" class="window" style="top: 100px; left: 100px; width: 450px; height: 300px;">
+        <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
+            <span class="window-title">Not Defteri</span>
+            <button class="close-btn" onclick="closeWindow('notepad')"></button>
+        </div>
+        <div class="window-body">
+            <iframe src="about:blank" class="app-iframe"></iframe>
+        </div>
 
-<div id="browser" class="window" style="width: 400px; height: 800px;">
-    <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
-        <span class="window-title">AI Asistan</span>
-        <button class="close-btn" onclick="closeWindow('browser')"></button>
-    </div>
-    <iframe id="browser-iframe" src="about:blank" class="app-iframe"></iframe>
-</div>
 
-<div id="music-app" class="window" style="width: 400px; height: 660px;">
-    <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
-        <span class="window-title">Müzik Çalar</span>
-        <button class="close-btn" onclick="closeWindow('music-app')"></button>
-    </div>
-    <div class="window-body">
-        <iframe src="about:blank" class="app-iframe"></iframe>
-    </div>
-</div>
+<div id="browser" class="window" style="top: 80px; left: 180px; width: 400px; height: 800px;">
+        <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
+            <span class="window-title">AI Asistan</span>
+            <button class="close-btn" onclick="closeWindow('browser')"></button>
+        </div>
+     <div class="window-body">
+        <iframe id="browser-iframe" src="about:blank" class="app-iframe"></iframe>
+     </div>
 
-<div id="iptv-app" class="window" style="width: 400px; height: 800px;">
-    <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
-        <span class="window-title">TV Player</span>
-        <button class="close-btn" onclick="closeWindow('iptv-app')"></button>
-    </div>
-    <div class="window-body">
-        <iframe src="about:blank" class="app-iframe"></iframe>
-    </div>
-</div>
 
-<div id="calorie-app" class="window" style="width: 420px; height: 600px;">
-    <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
-        <span class="window-title">Kalori Sayar</span>
-        <button class="close-btn" onclick="closeWindow('calorie-app')"></button>
-    </div>
-    <div class="window-body">
-        <iframe src="about:blank" class="app-iframe"></iframe>
-    </div>
-</div>
+<div id="music-app" class="window" style="top: 150px; left: 300px; width: 400px; height: 660px;">
+        <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
+            <span class="window-title">Müzik Çalar</span>
+            <button class="close-btn" onclick="closeWindow('music-app')"></button>
+        </div>
+        <div class="window-body">
+            <iframe src="about:blank" class="app-iframe"></iframe>
+        </div>
+
+<div id="iptv-app" class="window" style="top: 50px; left: 250px; width: 400px; height: 800px;">
+        <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
+            <span class="window-title">TV Player</span>
+            <button class="close-btn" onclick="closeWindow('iptv-app')"></button>
+        </div>
+        <div class="window-body">
+            <iframe src="about:blank" class="app-iframe"></iframe>
+        </div>
+
+<div id="calorie-app" class="window" style="top: 120px; left: 400px; width: 420px; height: 600px;">
+        <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
+            <span class="window-title">Kalori Sayar</span>
+            <button class="close-btn" onclick="closeWindow('calorie-app')"></button>
+        </div>
+        <div class="window-body">
+            <iframe src="about:blank" class="app-iframe"></iframe>
+        </div>
+
 
     <div id="info-popup">
         <h3>MixPUD</h3>
@@ -568,39 +568,8 @@ function dragEnd() {
     document.removeEventListener('touchend', dragEnd);
 }
 
-function centerAllWindows() {
-    const windows = document.querySelectorAll('.window');
-    
-    windows.forEach(win => {
-        // Pencerenin genişlik ve yüksekliğini al
-        const winWidth = win.offsetWidth;
-        const winHeight = win.offsetHeight;
-        
-        // Ekran genişlik ve yüksekliğini al
-        const screenWidth = window.innerWidth;
-        const screenHeight = window.innerHeight;
-        
-        // Ortalamak için piksel değerlerini hesapla
-        let leftPosition = (screenWidth - winWidth) / 2;
-        let topPosition = (screenHeight - winHeight) / 2;
-        
-        // Pencerelerin üst üste tam çakışmaması için hafif bir kayma (offset) eklemek istersen
-        // veya direkt saf ortada kalmalarını istiyorsan sınırlandırabilirsin:
-        if (leftPosition < 0) leftPosition = 0;
-        if (topPosition < 0) topPosition = 0;
-        
-        // Değerleri ata
-        win.style.position = 'absolute';
-        win.style.left = leftPosition + 'px';
-        win.style.top = topPosition + 'px';
-    });
-}
 
-// Sayfa yüklendiğinde çalıştır
-window.addEventListener('DOMContentLoaded', centerAllWindows);
 
-// Ekran döndürüldüğünde veya yeniden boyutlandırıldığında pencereleri yeniden ortala
-window.addEventListener('resize', centerAllWindows);
         
     </script>
 </body>
