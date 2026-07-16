@@ -255,6 +255,34 @@
             cursor: pointer;
             font-weight: bold;
         }
+
+
+
+
+
+        /* Taşıyıcı Kutu: Dışarı taşan her şeyi gizler */
+.iframe-wrapper {
+    width: 100%;          /* Genişliği projenize göre ayarlayabilirsiniz */
+    height: 500px;        /* Yüksekliği projenize göre ayarlayabilirsiniz */
+    overflow: hidden;     /* En önemli kısım: Taşmaları gizler */
+    position: relative;
+    border: 1px solid #ccc; /* İsteğe bağlı: Çerçeve sınırlarını görmek için */
+}
+
+/* İçi boşaltılacak ve kaydırılacak Iframe */
+.clipped-iframe {
+    position: absolute;
+    
+    /* 1. Adım: Kırpılacak 20px'lik alanı yukarı ve sola doğru öteliyoruz */
+    top: -20px;
+    left: -20px;
+    
+    /* 2. Adım: Ötelediğimiz 20px'lik kaybı kapatmak için genişlik ve yüksekliği 20px artırıyoruz */
+    width: calc(100% + 20px);
+    height: calc(100% + 20px);
+    
+    border: none; /* Varsayılan iframe kenarlığını kaldırır */
+}
     </style>
 </head>
 <body>
@@ -302,10 +330,17 @@
             <button class="close-btn" onclick="closeWindow('browser')"></button>
         </div>
 
-        
+   <div class="iframe-wrapper">     
 
         <iframe id="browser-iframe" src="about:blank" class="app-iframe"></iframe>
     </div>
+</div>
+
+
+
+
+
+
 
     <div id="music-app" class="window" style="top: 150px; left: 300px; width: 400px; height: 660px;">
         <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
