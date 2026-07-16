@@ -457,18 +457,31 @@
             }
         }
 
-        // Tarayıcı Gitme
-        function navigateBrowser() {
-            let urlInput = document.getElementById('browser-url').value;
-            let finalUrl = urlInput;
-            if (!urlInput.startsWith('http://') && !urlInput.startsWith('https://')) {
-                finalUrl = 'https://www.google.com/search?igu=1&q=' + encodeURIComponent(urlInput);
-            }
-            document.getElementById('browser-iframe').src = finalUrl;
-        }
-        document.getElementById('browser-url').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') navigateBrowser();
-        });
+
+       // Tarayıcı Gitme Fonksiyonu
+function navigateBrowser() {
+    let urlInput = document.getElementById('browser-url').value.trim();
+    
+    if (!urlInput) return; // Boşsa işlem yapma
+
+    // Eğer kullanıcı arama terimi girdiyse (nokta içermiyorsa, örn: "haberler") Google'da ara
+    if (!urlInput.includes('.') || urlInput.includes(' ')) {
+        const searchUrl = 'https://www.google.com/search?igu=1&q=' + encodeURIComponent(urlInput);
+        document.getElementById('browser-iframe').src = searchUrl;
+        return;
+    }
+
+    // Başına http/https protokolü ekleme kontrolü
+    if (!urlInput.startsWith('http://') && !urlInput.startsWith('https://')) {
+        urlInput = 'https://' + urlInput;
+    }
+
+    // HERHANGİ BİR ANAHTAR GEREKTİRMEYEN ÜCRETSİZ API BAĞLANTISI:
+    // Bu API, gitmek istediğin siteyi arka planda indirip güvenlik engellerini aşarak iframe'e basar.
+    const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(urlInput);
+    
+    document.getElementById('browser-iframe').src = proxyUrl;
+}
 
 // Sayfaya ilk tıklamada otomatik tam ekran yapma fonksiyonu
 function activateFullScreenOnFirstClick() {
