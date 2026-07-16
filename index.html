@@ -265,7 +265,7 @@
             <span class="icon-txt">Not Defteri</span>
         </div>
 
-        <div class="icon" onclick="openWindow('browser', 'İnternet')">
+        <div class="icon" onclick="openWindow('browser', 'AI Asistan')">
             <span class="icon-img">🤖</span>
             <span class="icon-txt">AI Asistan</span>
         </div>
@@ -392,7 +392,7 @@ let openAppsList = {};
 // Uygulamaların varsayılan iframe kaynak (src) adreslerini tutan harita
 const appSources = {
     'notepad': 'apps/notepad.html',
-    'browser': 'https://www.google.com/search?q=&sca_esv=cd41dbfca8f74214&igu=1&source=hp&ei=6ORYapekO9CWi-gPpsjp8Q8&iflsig=ABILxe8AAAAAaljy-RX7qaVZHjbGN80zNsRv_FtJvK5m&aep=22&udm=50&ved=0ahUKEwiXuI_XrteVAxVQywIHHSZkOv4QteYPCAY&cs=0&ictx=2&zs=1&oq=&gs_lp=Egdnd3Mtd2l6IgBIAFAAWABwAHgAkAEAmAEAoAEAqgEAuAEByAEAmAIAoAIAmAMAkgcAoAcAsgcAuAcAwgcAyAcAgAgB&sclient=gws-wiz',
+    'browser': 'https://www.google.com/search?igu=1&q=&udm=50',
     'music-app': 'apps/winamp.html',
     'iptv-app': 'apps/webtv.html',
     'calorie-app': 'apps/health.html'
@@ -461,7 +461,7 @@ function navigateBrowser() {
     let urlInput = document.getElementById('browser-url').value;
     let finalUrl = urlInput;
     if (!urlInput.startsWith('http://') && !urlInput.startsWith('https://')) {
-        finalUrl = 'https://www.google.com/search?igu=1&q=' + encodeURIComponent(urlInput);
+        finalUrl = 'https://www.google.com/search?igu=1&q=&udm=50=' + encodeURIComponent(urlInput);
     }
     document.getElementById('browser-iframe').src = finalUrl;
 }
