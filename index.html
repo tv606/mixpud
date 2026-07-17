@@ -256,7 +256,36 @@
             font-weight: bold;
         }
 
+/* Ana Masaüstü Alanı İçin Varsayılan İmleç */
+.web-os-container {
+  /* '0 0' koordinatı, imlecin sol üst ucunun tıklama noktası olduğunu belirtir */
+  cursor: url('icons/os-arrow.svg') 0 0, default;
+}
 
+/* Tıklanabilir Linkler, Butonlar ve İkonlar */
+.web-os-container a,
+.web-os-container button,
+.web-os-container .desktop-icon,
+.web-os-container .window-close-btn {
+  /* '8 2' koordinatı, el simgesinin işaret parmağı ucuna denk gelen tıklama noktasıdır */
+  cursor: url('icons/os-pointer.svg') 8 2, pointer;
+}
+
+/* Metin Alanları (Giriş kutuları, metin editörleri) */
+.web-os-container input[type="text"],
+.web-os-container textarea,
+.web-os-container .text-editor {
+  /* '16 16' imlecin tam ortasını tıklama noktası yapar (I-beam/I harfi şeklindeki imleçler için) */
+  cursor: url('icons/os-text.svg') 16 16, text;
+}
+
+/* Pencere Boyutlandırma Kenarları (Resize) */
+.web-os-container .window-resize-edge-horizontal {
+  cursor: url('icons/os-resize-width.svg') 16 16, ew-resize;
+}
+.web-os-container .window-resize-edge-vertical {
+  cursor: url('icons/os-resize-height.svg') 16 16, ns-resize;
+}
 
 
 
@@ -266,7 +295,7 @@
 
     </style>
 </head>
-<body>
+<body class="web-os-container">
 
     <div id="desktop">
         <div class="icon" onclick="openWindow('notepad', 'Not Defteri')">
