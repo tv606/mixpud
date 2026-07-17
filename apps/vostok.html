@@ -225,6 +225,9 @@
         const canvas = document.getElementById('visualizerCanvas');
         const canvasCtx = canvas.getContext('2d');
 
+        // 👇 BAŞLANGIÇ SES SEVİYESİNİ KAYDIRICI DEĞERİNE EŞİTLEMEK İÇİN BU SATIRI EKLEYİN
+        player.volume = document.getElementById('volumeSlider').value;
+        
         let audioCtx;
         let analyser;
         let source;
