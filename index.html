@@ -328,7 +328,10 @@
             <span class="icon-txt">Film Katalog</span>
         </div>
 
-
+       <div class="icon" onclick="openWindow('filmondo-app', 'Filmondo')">
+            <span class="icon-img">🦄</span>
+            <span class="icon-txt">Filmondo</span>
+        </div>
 
         <div class="icon" onclick="openWindow('calorie-app', 'Kalori Sayar')">
             <span class="icon-img">🍎</span>
@@ -399,11 +402,19 @@
         </div>
  </div>
 
-
+<div id="filmondo-app" class="window" style="top: 80px; left: 300px; width: 400px; height: 800px;">
+        <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
+            <span class="window-title">Filmondo</span>
+            <button class="close-btn" onclick="closeWindow('filmondo-app')"></button>
+        </div>
+        <div class="window-body">
+            <iframe src="about:blank" class="app-iframe"></iframe>
+        </div>
+ </div>
 
     
     
-<div id="calorie-app" class="window" style="top: 80px; left: 300px; width: 420px; height: 600px;">
+<div id="calorie-app" class="window" style="top: 80px; left: 320px; width: 420px; height: 600px;">
         <div class="window-header" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
             <span class="window-title">Kalori Sayar</span>
             <button class="close-btn" onclick="closeWindow('calorie-app')"></button>
@@ -470,6 +481,7 @@ const appSources = {
     'radio-app': 'apps/vostok.html',
     'iptv-app': 'apps/webtv.html',
     'stremio-app': 'apps/stremio.html',
+    'filmondo-app': 'apps/filmondo.html',
     'calorie-app': 'apps/health.html'
 };
 
