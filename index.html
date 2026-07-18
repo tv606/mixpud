@@ -643,7 +643,7 @@ function navigateBrowser() {
     let urlInput = document.getElementById('browser-url').value;
     let finalUrl = urlInput;
     if (!urlInput.startsWith('http://') && !urlInput.startsWith('https://')) {
-        finalUrl = 'https://www.google.com/search?q=cevaplar+sadece+d%C3%BCz+metin+olarak+verilecektir+&igu=1&hl=tr&lr=lang_tr&q=&udm=50' + encodeURIComponent(urlInput);
+        finalUrl = 'https://www.google.com/search?q=&hl=tr&lr=lang_tr&q=&udm=50' + encodeURIComponent(urlInput);
     }
     document.getElementById('browser-iframe').src = finalUrl;
 }
