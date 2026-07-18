@@ -26,9 +26,7 @@
             background-color:#000000;
         } 
         
-      html {
-             scrollbar-color: #8b5cf6 #1e1b4b;
-           }  
+ 
         
         /* Kilit Ekranı Tasarımı */
         #lock-screen {
@@ -739,6 +737,22 @@ function dragEnd() {
     document.removeEventListener('touchmove', drag);
     document.removeEventListener('touchend', dragEnd);
 }
+
+
+// Dinamik style elementi oluşturuluyor
+const scrollbarStyle = document.createElement('style');
+
+// #browser ve içindeki tüm scroll olabilecek alanlara stil uygulanıyor
+scrollbarStyle.textContent = `
+  #browser, #browser *, #browser-iframe {
+    scrollbar-color: #8b5cf6 #1e1b4b !important;
+  }
+`;
+
+// Oluşturulan stil dokümanın <head> kısmına enjekte ediliyor
+document.head.appendChild(scrollbarStyle);
+
+        
     </script>
 </body>
 </html>
