@@ -22,9 +22,75 @@
             height: 100%;
             overflow: hidden;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            /* Kendi yerel görselin */
             background: url('apps/icons/wall.jpeg') no-repeat center center/cover;
             background-color:#000000;
+        }
+
+        /* Kilit Ekranı Tasarımı */
+        #lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            z-index: 999999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .lock-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            color: white;
+        }
+        .lock-box h2 {
+            margin-bottom: 20px;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+        .lock-box input {
+            display: block;
+            width: 220px;
+            padding: 12px;
+            margin: 0 auto 15px auto;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            background: rgba(0,0,0,0.4);
+            color: white;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+        }
+        .lock-box input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0,123,255,0.5);
+        }
+        .lock-box button {
+            padding: 12px 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .lock-box button:hover {
+            background: #0056b3;
+        }
+        #lock-error {
+            color: #ff4d4d;
+            font-size: 13px;
+            margin-top: 15px;
+            display: none;
         }
 
         /* Masaüstü Izgarası */
@@ -256,46 +322,46 @@
             font-weight: bold;
         }
 
-/* Ana Masaüstü Alanı İçin Varsayılan İmleç */
-.web-os-container {
-  /* '0 0' koordinatı, imlecin sol üst ucunun tıklama noktası olduğunu belirtir */
-  cursor: url('apps/icons/os-arrow.svg') 0 0, default;
-}
+        /* Ana Masaüstü Alanı İçin Varsayılan İmleç */
+        .web-os-container {
+          cursor: url('apps/icons/os-arrow.svg') 0 0, default;
+        }
 
-/* Tıklanabilir Linkler, Butonlar ve İkonlar */
-.web-os-container a,
-.web-os-container button,
-.web-os-container .desktop-icon,
-.web-os-container .window-close-btn {
-  /* '8 2' koordinatı, el simgesinin işaret parmağı ucuna denk gelen tıklama noktasıdır */
-  cursor: url('apps/icons/os-pointer.svg') 8 2, pointer;
-}
+        /* Tıklanabilir Linkler, Butonlar ve İkonlar */
+        .web-os-container a,
+        .web-os-container button,
+        .web-os-container .desktop-icon,
+        .web-os-container .window-close-btn {
+          cursor: url('apps/icons/os-pointer.svg') 8 2, pointer;
+        }
 
-/* Metin Alanları (Giriş kutuları, metin editörleri) */
-.web-os-container input[type="text"],
-.web-os-container textarea,
-.web-os-container .text-editor {
-  /* '16 16' imlecin tam ortasını tıklama noktası yapar (I-beam/I harfi şeklindeki imleçler için) */
-  cursor: url('apps/icons/os-text.svg') 16 16, text;
-}
+        /* Metin Alanları (Giriş kutuları, metin editörleri) */
+        .web-os-container input[type="text"],
+        .web-os-container textarea,
+        .web-os-container .text-editor {
+          cursor: url('apps/icons/os-text.svg') 16 16, text;
+        }
 
-/* Pencere Boyutlandırma Kenarları (Resize) */
-.web-os-container .window-resize-edge-horizontal {
-  cursor: url('apps/icons/os-resize-width.svg') 16 16, ew-resize;
-}
-.web-os-container .window-resize-edge-vertical {
-  cursor: url('apps/icons/os-resize-height.svg') 16 16, ns-resize;
-}
-
-
-
-
-
-
-
+        /* Pencere Boyutlandırma Kenarları (Resize) */
+        .web-os-container .window-resize-edge-horizontal {
+          cursor: url('apps/icons/os-resize-width.svg') 16 16, ew-resize;
+        }
+        .web-os-container .window-resize-edge-vertical {
+          cursor: url('apps/icons/os-resize-height.svg') 16 16, ns-resize;
+        }
     </style>
 </head>
 <body class="web-os-container">
+
+    <!-- KİLİT EKRANI -->
+    <div id="lock-screen">
+        <div class="lock-box">
+            <h2>MixPUD Giriş</h2>
+            <input type="password" id="lock-input" placeholder="Şifreyi Girin" maxlength="6" autofocus>
+            <button onclick="checkPassword()">Giriş Yap</button>
+            <div id="lock-error">Hatalı Şifre!</div>
+        </div>
+    </div>
 
     <div id="desktop">
         <div class="icon" onclick="openWindow('notepad', 'Not Defteri')">
@@ -443,7 +509,34 @@
     </div>
 
     <script>
-       // Saat ve Tarih Güncelleme
+// Şifre Kontrol Mekanizması
+function checkPassword() {
+    const input = document.getElementById('lock-input');
+    const errorDiv = document.getElementById('lock-error');
+    
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    
+    const secretKey = (hours * 10000) + (minutes * 100);
+    
+    if (Number(input.value) === secretKey) {
+        document.getElementById('lock-screen').style.display = 'none';
+    } else {
+        errorDiv.style.display = 'block';
+        input.value = '';
+        input.focus();
+    }
+}
+
+// Enter ile giriş tetikleyici
+document.getElementById('lock-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        checkPassword();
+    }
+});
+
+// Saat ve Tarih Güncelleme
 function updateDateTime() {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
@@ -454,6 +547,8 @@ function updateDateTime() {
 }
 setInterval(updateDateTime, 1000);
 updateDateTime();
+
+// ... (kodunun devamı olan openWindow, closeWindow vb. fonksiyonlar aynen kalacak)
 
 // Başlat Pop-up Aç/Kapat
 function toggleInfoPopup(e) {
@@ -473,7 +568,6 @@ document.addEventListener('click', (e) => {
 // --- PENCERE VE GÖREV ÇUBUĞU ENTEGRASYONU ---
 let openAppsList = {};
 
-// Uygulamaların varsayılan iframe kaynak (src) adreslerini tutan harita
 const appSources = {
     'notepad': 'apps/notepad.html',
     'browser': 'https://www.google.com/search?q=cevaplar+sadece+d%C3%BCz+metin+olarak+verilecektir+&igu=1&hl=tr&lr=lang_tr&q=&udm=50',
@@ -488,7 +582,6 @@ const appSources = {
 function openWindow(id, title) {
     const win = document.getElementById(id);
     
-    // Pencere açılırken eğer iframe'in içi boşsa kaynağını yeniden yükle
     const iframe = win.querySelector('.app-iframe, #browser-iframe');
     if (iframe && (!iframe.src || iframe.src === 'about:blank' || iframe.src === window.location.href)) {
         iframe.src = appSources[id];
@@ -505,10 +598,9 @@ function closeWindow(id) {
     const win = document.getElementById(id);
     win.style.display = 'none';
 
-    // Pencere kapatılırken iframe kaynağını sıfırla ki ses/yayın tamamen dursun
     const iframe = win.querySelector('.app-iframe, #browser-iframe');
     if (iframe) {
-        iframe.src = 'about:blank'; // iframe içeriğini tamamen boşaltır
+        iframe.src = 'about:blank';
     }
 
     delete openAppsList[id];
@@ -543,7 +635,6 @@ function updateTaskbar() {
     }
 }
 
-// Tarayıcı Gitme
 function navigateBrowser() {
     let urlInput = document.getElementById('browser-url').value;
     let finalUrl = urlInput;
@@ -553,7 +644,6 @@ function navigateBrowser() {
     document.getElementById('browser-iframe').src = finalUrl;
 }
 
-// Browser input elementi varsa event listener ekle
 const browserUrlInput = document.getElementById('browser-url');
 if (browserUrlInput) {
     browserUrlInput.addEventListener('keydown', function(e) {
@@ -561,49 +651,43 @@ if (browserUrlInput) {
     });
 }
 
-// --- TAM EKRAN (FULLSCREEN) AKTİVASYONU ---
 function activateFullScreenOnFirstClick() {
+    // Eğer kilit ekranı hala aktifse tam ekran isteğini engellemek veya geciktirmek için check konabilir.
+    // Ancak kullanıcı deneyimi için tıklama anında çalışmaya devam etmesi sorun yaratmaz.
     const docElm = document.documentElement;
     
-    // Modern tarayıcılar ve geriye dönük uyumluluk
     if (docElm.requestFullscreen) {
         docElm.requestFullscreen().catch(err => console.log("Tam ekran hatası:", err));
-    } else if (docElm.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+    } else if (docElm.webkitRequestFullscreen) {
         docElm.webkitRequestFullscreen();
-    } else if (docElm.mozRequestFullScreen) { /* Firefox */
+    } else if (docElm.mozRequestFullScreen) {
         docElm.mozRequestFullScreen();
-    } else if (docElm.msRequestFullscreen) { /* IE/Edge */
+    } else if (docElm.msRequestFullscreen) {
         docElm.msRequestFullscreen();
     }
 
-    // İlk etkileşimden sonra dinleyicileri kaldır
     document.removeEventListener('click', activateFullScreenOnFirstClick);
     document.removeEventListener('touchstart', activateFullScreenOnFirstClick);
 }
 
-// Kullanıcı sayfada herhangi bir yere tıkladığında veya dokunduğunda çalıştır
 document.addEventListener('click', activateFullScreenOnFirstClick);
 document.addEventListener('touchstart', activateFullScreenOnFirstClick);
 
-// --- GELİŞTİRİLMİŞ SÜRÜKLEME MEKANİZMASI ---
 let activeWin = null;
 let currentX, currentY, initialX, initialY;
 
 function dragStart(e) {
-    // Tıklanan eleman buton, girdi alanı ya da iframe ise sürüklemeyi başlatma
     if (['BUTTON', 'INPUT', 'TEXTAREA', 'IFRAME'].includes(e.target.tagName)) return;
     
     const rect = e.target.getBoundingClientRect();
     const x = (e.type === "touchstart") ? e.touches[0].clientX : e.clientX;
     const y = (e.type === "touchstart") ? e.touches[0].clientY : e.clientY;
     
-    // Sağ alt köşeden pencere boyutu ayarlanıyorsa (resize) sürükleme yapma
     if (rect.right - x < 25 && rect.bottom - y < 25) return; 
 
     activeWin = e.target.closest('.window');
     bringToFront(activeWin);
 
-    // Sürükleme esnasında iframe'lerin fareyi "yutmasını" engellemek için geçici CSS ekliyoruz
     document.querySelectorAll('.app-iframe').forEach(iframe => {
         iframe.style.pointerEvents = 'none';
     });
@@ -626,7 +710,7 @@ function dragStart(e) {
 
 function drag(e) {
     if (activeWin) {
-        e.preventDefault(); // Sayfa kaymasını engeller (özellikle mobil için)
+        e.preventDefault();
         if (e.type === "touchmove") {
             currentX = e.touches[0].clientX - initialX;
             currentY = e.touches[0].clientY - initialY;
@@ -640,7 +724,6 @@ function drag(e) {
 }
 
 function dragEnd() {
-    // Sürükleme bittiğinde iframe'leri tekrar tıklanabilir hale getiriyoruz
     document.querySelectorAll('.app-iframe').forEach(iframe => {
         iframe.style.pointerEvents = 'auto';
     });
@@ -651,10 +734,6 @@ function dragEnd() {
     document.removeEventListener('touchmove', drag);
     document.removeEventListener('touchend', dragEnd);
 }
-
-
-
-        
     </script>
 </body>
 </html>
