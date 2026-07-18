@@ -357,14 +357,14 @@
 <body class="web-os-container">
 
     <!-- KİLİT EKRANI -->
-    <div id="lock-screen">
-        <div class="lock-box">
-            <h2>MixPUD Giriş</h2>
-            <input type="password" id="lock-input" placeholder="Şifreyi Girin" maxlength="6" autofocus>
-            <button onclick="checkPassword()">Giriş Yap</button>
-            <div id="lock-error">Hatalı Şifre!</div>
-        </div>
-    </div>
+   <!-- <div id="lock-screen"> -->
+       <!-- <div class="lock-box"> -->
+           <!-- <h2>MixPUD Giriş</h2> -->
+           <!-- <input type="password" id="lock-input" placeholder="Şifreyi Girin" maxlength="6" autofocus> -->
+           <!-- <button onclick="checkPassword()">Giriş Yap</button> -->
+           <!-- <div id="lock-error">Hatalı Şifre!</div> -->
+       <!-- </div> -->
+   <!-- </div> -->
 
     <div id="desktop">
         <div class="icon" onclick="openWindow('notepad', 'Not Defteri')">
@@ -513,24 +513,31 @@
 
     <script>
 // Şifre Kontrol Mekanizması
-function checkPassword() {
-    const input = document.getElementById('lock-input');
-    const errorDiv = document.getElementById('lock-error');
+//function checkPassword() {
+   // const input = document.getElementById('lock-input');
+    //const errorDiv = document.getElementById('lock-error');
     
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
+   // const now = new Date();
+   // const hours = now.getHours();
+   // const minutes = now.getMinutes();
     
-    const secretKey = (hours * 10000) + (minutes * 100);
+   // const secretKey = (hours * 10000) + (minutes * 100);
     
-    if (Number(input.value) === secretKey) {
-        document.getElementById('lock-screen').style.display = 'none';
-    } else {
-        errorDiv.style.display = 'block';
-        input.value = '';
-        input.focus();
-    }
-}
+    //if (Number(input.value) === secretKey) {
+        //document.getElementById('lock-screen').style.display = 'none';
+   // } else {
+       // errorDiv.style.display = 'block';
+       // input.value = '';
+        //input.focus();
+   // }
+//}
+
+// Enter ile giriş tetikleyici
+//document.getElementById('lock-input').addEventListener('keydown', function(e) {
+   // if (e.key === 'Enter') {
+       // checkPassword();
+   // }
+//});
 
 // Enter ile giriş tetikleyici
 document.getElementById('lock-input').addEventListener('keydown', function(e) {
