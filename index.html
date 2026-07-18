@@ -643,7 +643,7 @@ function navigateBrowser() {
     let urlInput = document.getElementById('browser-url').value;
     let finalUrl = urlInput;
     if (!urlInput.startsWith('http://') && !urlInput.startsWith('https://')) {
-        finalUrl = 'https://www.google.com/search?q=K%C4%B1sa+c%C3%BCmleler+kullan+giri%C5%9F+ya+da+nezaket+ifadeleri+kullanma+%C3%96nce+ara%C3%A7lar%C4%B1+%C3%A7al%C4%B1%C5%9Ft%C4%B1r+sonucu+g%C3%B6ster+sonra+dur+Gereksiz+a%C3%A7%C4%B1klama+yapma+Artikelleri+%C3%A7%C4%B1kar+Aksi+istenmedik%C3%A7e+asla+soru+sorma+&igu=1&hl=tr&lr=lang_tr&q=&udm=50=' + encodeURIComponent(urlInput);
+        finalUrl = 'https://www.google.com/search?q=cevaplar+sadece+d%C3%BCz+metin+olarak+verilecektir+&igu=1&hl=tr&lr=lang_tr&q=&udm=50' + encodeURIComponent(urlInput);
     }
     document.getElementById('browser-iframe').src = finalUrl;
 }
