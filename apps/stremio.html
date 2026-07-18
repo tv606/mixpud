@@ -28,7 +28,7 @@
             min-height: 100vh;
         }
 
-       html {
+        html {
              scrollbar-color: #8b5cf6 #1e1b4b;
         }
         
@@ -183,27 +183,34 @@
     <header>
         <div class="logo">STREMIO<span>.KATALOG</span></div>
         <div class="filter-group">
-            <button class="btn active" onclick="loadCatalog('movie')">Filmler</button>
-            <button class="btn" onclick="loadCatalog('series')">Diziler</button>
+            <button class="btn active" onclick="loadCatalog('movie', this)">Filmler</button>
+            <button class="btn" onclick="loadCatalog('series', this)">Diziler</button>
         </div>
     </header>
-    <div class="info">Önce yukarıdaki menüden bir seçim yapın. Bu katalog Stremio'ya son gelen dizileri ve filmleri listeler.</div>
+    <div class="info">Bu katalog Stremio'ya son gelen dizileri ve filmleri listeler.</div>
     <main class="catalog-grid" id="catalog-grid">
         <div class="loader">Katalog yükleniyor...</div>
-    
     </main>
 
     <script>
         // Stremio'nun resmi v3 Cinemeta API adresi
         const API_URL = "https://v3-cinemeta.strem.io/catalog";
 
-        async function loadCatalog(type) {
+        async function loadCatalog(type, element) {
             const grid = document.getElementById('catalog-grid');
             grid.innerHTML = '<div class="loader">Yükleniyor..</div>';
             
-            // Buton aktiflik durumlarını güncelle
+            // Aktif buton görsel sınıfını temizle
             document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            
+            // Eğer fonksiyon bir tıklama ile çağrıldıysa o butonu, 
+            // sayfa ilk açılışında çağrıldıysa varsayılan (movie) butonunu aktif yap
+            if (element) {
+                element.classList.add('active');
+            } else {
+                const defaultBtn = document.querySelector(`.btn[onclick*="'${type}'"]`);
+                if (defaultBtn) defaultBtn.classList.add('active');
+            }
 
             try {
                 // Stremio popüler içerikler kataloğunu çekiyoruz
@@ -214,7 +221,6 @@
 
                 if (data && data.metas) {
                     data.metas.forEach(item => {
-                        // Poster görseli yoksa boş şablon yerine yedek görsel ayarla
                         const poster = item.poster || 'https://via.placeholder.com/300x450/151138/ffffff?text=Resim+Yok';
                         const rating = item.imdbRating ? `★ ${item.imdbRating}` : 'N/A';
                         const year = item.year || 'Bilinmiyor';
@@ -244,7 +250,7 @@
             }
         }
 
-        // Sayfa açıldığında varsayılan olarak Popüler Filmleri getir
+        // Sayfa ilk açıldığında doğrudan film kataloğunu tetikle
         window.onload = () => {
             loadCatalog('movie');
         };
